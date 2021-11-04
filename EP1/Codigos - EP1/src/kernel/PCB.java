@@ -15,7 +15,7 @@ public class PCB {
 	public int[] registradores = new int[5];
 	public int contadorDePrograma = 0;
 	public Operacao[] codigo;
-	public int chuteBurst = 5;
+	public int chuteBurst;
 	public int burst = 0;
 	public int burstRestante = 0;
 	public int tempoDeEspera = 0; //quanto ciclos permaneceu na fila de prontos
@@ -48,6 +48,8 @@ public class PCB {
 	public void setState(Estado _estado) {
 		this.estado = _estado;
 	}
+
+	public void setChuteBurst(Integer chute){ this.chuteBurst = chute;}
 
 	public static class shortestJobFirst implements Comparator<PCB> {
 

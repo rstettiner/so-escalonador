@@ -18,6 +18,7 @@ public class SeuSO extends SO {
 	List<PCB> terminados = new ArrayList<PCB>();
 	PCB pcbExecutando = null;
 	int trocasDeContexto = 0;
+	int chuteBurst = 5;
 	Escalonador escalonadorEscolhido;
 
 	@Override
@@ -28,6 +29,7 @@ public class SeuSO extends SO {
 		PCB processo = new PCB(codigo);
 		processo.setId(this.idProcessoNovo());
 		processo.setState(Estado.NOVO);
+		processo.setChuteBurst(chuteBurst);
 		processos.add(processo);
 	}
 
@@ -116,14 +118,14 @@ public class SeuSO extends SO {
 			if(this.processos.size() > 0){
 				//saber quem é quem
 				this.prontos = this.processos.stream().filter((x) -> x.estado.equals(Estado.PRONTO) || ((x.estado.equals(Estado.NOVO) && x.contadorDePrograma > 0) || (x.estado.equals(Estado.ESPERANDO) && x.operacoesES.size() == 0))).collect(Collectors.toList());
-				this.prontos.forEach((x) -> x.setState(Estado.PRONTO));
 				this.esperando = this.processos.stream().filter((x) -> x.estado.equals(Estado.ESPERANDO) || (x.operacoesES.size() > 0 && (x.estado.equals(Estado.PRONTO) || x.estado.equals(Estado.EXECUTANDO)))).collect(Collectors.toList());
 				this.prontos.removeAll(esperando);
-				this.esperando.forEach((x) -> x.setState(Estado.ESPERANDO));
 				this.terminados = this.processos.stream().filter((x) -> x.estado.equals(Estado.TERMINADO) || (x.operacoesES.size() <= 0 && x.operacoesCPU.size() <= 0)).collect(Collectors.toList());
 				this.esperando.removeAll(terminados);
 				this.prontos.removeAll(terminados);
 				this.terminados.forEach((x) -> x.setState(Estado.TERMINADO));
+				this.esperando.forEach((x) -> x.setState(Estado.ESPERANDO));
+				this.prontos.forEach((x) -> x.setState(Estado.PRONTO));
 
 				//quem vai ser executado
 				ArrayList<PCB> podeSerExecutado = new ArrayList<>();
@@ -219,6 +221,14 @@ public class SeuSO extends SO {
 			if(processo.estado.equals(Estado.NOVO) || processo.estado.equals(Estado.PRONTO)) processo.tempoDeResposta += 1;
 			processo.burstRestante = (processo.chuteBurst - processo.burst < 0 ? 0 : processo.chuteBurst - processo.burst);
 			processo.tempoDeRetorno = processo.tempoDeResposta + processo.tempoDeEspera;
+		}
+		//setta nova média de chute pro burst
+		Integer nextBurst = 0;
+		for (PCB processo : this.terminados) {
+			nextBurst += processo.burst;
+		}
+		if(this.terminados.size() > 0){
+			this.chuteBurst = nextBurst / this.terminados.size();
 		}
 	}
 
