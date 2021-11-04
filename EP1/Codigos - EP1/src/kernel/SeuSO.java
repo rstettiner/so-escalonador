@@ -59,6 +59,7 @@ public class SeuSO extends SO {
 			this.pcbExecutando = pcbProximo;
 			pcbProximo.setState(Estado.EXECUTANDO);
 			this.trocasDeContexto++;
+			pcbAtual.burst++;
 		} else {
 			if (this.escalonadorEscolhido == Escalonador.FIRST_COME_FIRST_SERVED || escalonadorEscolhido == Escalonador.SHORTEST_JOB_FIRST) {
 				if(this.terminados.contains(pcbAtual)) {
@@ -67,17 +68,19 @@ public class SeuSO extends SO {
 					pcbAtual.setState(Estado.TERMINADO);
 					this.trocasDeContexto++;
 				}
+				pcbAtual.burst++;
 			} else {
 				// preemptivos
-				pcbProximo.setState(Estado.EXECUTANDO);
-				this.pcbExecutando = pcbProximo;
 				if (!this.terminados.contains(pcbAtual)) {
 					//preemptivo vai pro esperando ou pro pronto?
 					pcbAtual.setState(Estado.ESPERANDO);
 				} else{
 					pcbAtual.setState(Estado.TERMINADO);
 				}
+				pcbProximo.setState(Estado.EXECUTANDO);
+				this.pcbExecutando = pcbProximo;
 				this.trocasDeContexto++;
+				pcbAtual.burst++;
 			}
 		}
 	}
