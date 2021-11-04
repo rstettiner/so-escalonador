@@ -77,4 +77,20 @@ public class PCB {
 		}
 	}
 
+	public static class roudRobinQuantum5 implements Comparator<PCB> {
+
+		@Override
+		public int compare(PCB o1, PCB o2) {
+			if(o1.burst > 5 && o2.burst > 5){
+				return o1.idProcesso - o2.idProcesso;
+			} else if(o1.burst > 5 && o2.burst < 5){
+				return -1;
+			} else if(o1.burst < 5 && o2.burst > 5){
+				return 1;
+			} else{
+				return o1.idProcesso - o2.idProcesso;
+			}
+		}
+	}
+
 }

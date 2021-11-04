@@ -207,8 +207,7 @@ public class SeuSO extends SO {
 				podeSerExecutado.addAll(this.prontos);
 				podeSerExecutado.addAll(this.esperando);
 
-				//round robin não tem
-				//Collections.sort(podeSerExecutado, new PCB.shortestJobFirst());
+				Collections.sort(podeSerExecutado, new PCB.roudRobinQuantum5());
 				if(podeSerExecutado.size() > 0){
 					PCB atual = pcbExecutando;
 					//mudar as propriedades do processo sendo executado
@@ -220,7 +219,6 @@ public class SeuSO extends SO {
 		}
 		for (PCB processo : this.processos) {
 			processo.contadorDePrograma += 1;
-			processo.burst += 1;
 			if(processo.estado.equals(Estado.NOVO) || processo.estado.equals(Estado.PRONTO)) processo.tempoDeResposta += 1;
 			processo.burstRestante = (processo.chuteBurst - processo.burst < 0 ? 0 : processo.chuteBurst - processo.burst);
 			processo.tempoDeRetorno = processo.tempoDeResposta + processo.tempoDeEspera;
