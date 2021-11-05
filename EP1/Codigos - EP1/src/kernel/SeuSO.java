@@ -59,7 +59,6 @@ public class SeuSO extends SO {
 			this.pcbExecutando = pcbProximo;
 			pcbProximo.setState(Estado.EXECUTANDO);
 			this.trocasDeContexto++;
-			pcbAtual.burst++;
 		} else {
 			if (this.escalonadorEscolhido == Escalonador.FIRST_COME_FIRST_SERVED || escalonadorEscolhido == Escalonador.SHORTEST_JOB_FIRST) {
 				if(this.terminados.contains(pcbAtual)) {
@@ -121,14 +120,15 @@ public class SeuSO extends SO {
 			if(this.processos.size() > 0){
 				//saber quem é quem
 				this.prontos = this.processos.stream().filter((x) -> x.estado.equals(Estado.PRONTO) || ((x.estado.equals(Estado.NOVO) && x.contadorDePrograma > 0) || (x.estado.equals(Estado.ESPERANDO) && x.operacoesES.size() == 0))).collect(Collectors.toList());
+				this.prontos.forEach((x) -> x.setState(Estado.PRONTO));
 				this.esperando = this.processos.stream().filter((x) -> x.estado.equals(Estado.ESPERANDO) || (x.operacoesES.size() > 0 && (x.estado.equals(Estado.PRONTO) || x.estado.equals(Estado.EXECUTANDO)))).collect(Collectors.toList());
 				this.prontos.removeAll(esperando);
+				this.esperando.forEach((x) -> x.setState(Estado.ESPERANDO));
 				this.terminados = this.processos.stream().filter((x) -> x.estado.equals(Estado.TERMINADO) || (x.operacoesES.size() <= 0 && x.operacoesCPU.size() <= 0)).collect(Collectors.toList());
 				this.esperando.removeAll(terminados);
 				this.prontos.removeAll(terminados);
 				this.terminados.forEach((x) -> x.setState(Estado.TERMINADO));
-				this.esperando.forEach((x) -> x.setState(Estado.ESPERANDO));
-				this.prontos.forEach((x) -> x.setState(Estado.PRONTO));
+
 
 				//quem vai ser executado
 				ArrayList<PCB> podeSerExecutado = new ArrayList<>();
@@ -152,6 +152,7 @@ public class SeuSO extends SO {
 				this.esperando.forEach((x) -> x.setState(Estado.ESPERANDO));
 				this.terminados = this.processos.stream().filter((x) -> x.estado.equals(Estado.TERMINADO) || (x.operacoesES.size() <= 0 && x.operacoesCPU.size() <= 0)).collect(Collectors.toList());
 				this.esperando.removeAll(terminados);
+				this.prontos.removeAll(terminados);
 				this.terminados.forEach((x) -> x.setState(Estado.TERMINADO));
 
 				//quem vai ser executado
@@ -176,6 +177,7 @@ public class SeuSO extends SO {
 				this.esperando.forEach((x) -> x.setState(Estado.ESPERANDO));
 				this.terminados = this.processos.stream().filter((x) -> x.estado.equals(Estado.TERMINADO) || (x.operacoesES.size() <= 0 && x.operacoesCPU.size() <= 0)).collect(Collectors.toList());
 				this.esperando.removeAll(terminados);
+				this.prontos.removeAll(terminados);
 				this.terminados.forEach((x) -> x.setState(Estado.TERMINADO));
 
 				//quem vai ser executado
@@ -200,6 +202,7 @@ public class SeuSO extends SO {
 				this.esperando.forEach((x) -> x.setState(Estado.ESPERANDO));
 				this.terminados = this.processos.stream().filter((x) -> x.estado.equals(Estado.TERMINADO) || (x.operacoesES.size() <= 0 && x.operacoesCPU.size() <= 0)).collect(Collectors.toList());
 				this.esperando.removeAll(terminados);
+				this.prontos.removeAll(terminados);
 				this.terminados.forEach((x) -> x.setState(Estado.TERMINADO));
 
 				//quem vai ser executado
